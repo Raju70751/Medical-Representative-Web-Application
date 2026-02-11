@@ -1,16 +1,31 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GrCompliance } from "react-icons/gr";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { GoSearch } from "react-icons/go";
-
+import { fetchVisits } from './fetchdata'
 import { useSelector } from "react-redux"
 import type { RootState } from "@/app/store/store"
+import { RiDeleteBin5Fill } from "react-icons/ri"
+import { removelist } from '@/app/store/visitSite'
+import { useDispatch } from "react-redux";
 
+
+type Visit = {
+    id: string
+    name: string
+    location: string
+    date: string
+    pharmacy: string
+    remarks: string
+}
 
 
 export default function Visits() {
+
+    const [data, setVisits] = useState<Visit[]>([])
+    const [isMounted, setIsMounted] = useState(false)
 
     const demoData = useSelector(
         (state: RootState) => state.visit.visits
@@ -25,6 +40,16 @@ export default function Visits() {
 
     const currentData = demoData.slice(startIndex, endIndex)
 
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        fetchVisits()
+            .then(setVisits)
+            .catch(console.error)
+        setIsMounted(true)
+    }, [])
+
+    console.log(currentData)
     return (
         <div className="h-screen w-full p-2 bg-[#eeeeee]/50">
             {/* ----- Summery Container ----- */}
@@ -37,7 +62,7 @@ export default function Visits() {
                     <GrCompliance className="bg-[#eeeeee]/70 text-[#ce7e00] rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Today's Visits</p>
-                        <p className="text-lg font-black self-center">6</p>
+                        <p className="text-lg font-black self-center">{demoData.length}</p>
                     </div>
                 </div>
 
@@ -47,7 +72,7 @@ export default function Visits() {
                     <GrCompliance className="bg-[#eeeeee]/70 text-green-500 rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Total Visits</p>
-                        <p className="text-lg font-black self-center">{demoData.length}</p>
+                        <p className="text-lg font-black self-center">{isMounted ? data.length : 0}</p>
                     </div>
                 </div>
             </div>
@@ -55,15 +80,7 @@ export default function Visits() {
             {/* ----- Visit List ----- */}
 
             <div className="flex flex-col mt-2 p-2">
-                <div className="flex flex-col md:flex-row gap-2 md:inline-flex md:justify-between items-center p-2 rounded w-full bg-dlue-100">
-                    <div className="md:inline-flex">
-                        <input type="search" placeholder="Search Name.." className="outline-none bg-white p-1 border-b-1 border-gray-400 border-offset-3 mb-2" />
-                        <input type="date" className="outline-none border-b-1 mb-2" />
-                    </div>
-
-                    <GoSearch className="text-sm md:text-xl font-black hidden md:block hover:text-blue-400" />
-                    <button className="p-2 bg-blue-400 rounded self-center text-white md:hidden">Search</button>
-                </div>
+               
 
                 {/* ----- Table ----- */}
 
@@ -93,6 +110,7 @@ export default function Visits() {
                                     <td className="p-3 border">{item.date}</td>
                                     <td className="p-3 border">{item.pharmacy}</td>
                                     <td className="p-3 border">{item.remarks}</td>
+                                    <td className="p-3 border" ><RiDeleteBin5Fill onClick={() => dispatch(removelist(item.id))} /></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -105,6 +123,6 @@ export default function Visits() {
                 </div>
 
             </div>
-        </div>
+        </div >
     )
 }

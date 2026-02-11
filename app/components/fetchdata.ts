@@ -1,6 +1,6 @@
 
-export const data = async () => {
-    const res = await fetch('@/app/api/visits')
-    const data = res.json()
+export const fetchVisits = async () => {
+    const res = await fetch('/api/visits')
+    const data = await res.json()
     return data
 }

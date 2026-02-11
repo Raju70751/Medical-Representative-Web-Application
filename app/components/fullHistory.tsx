@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { GrCompliance } from "react-icons/gr";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { GoSearch } from "react-icons/go";
-
-import { useSelector } from "react-redux"
+import { fetchVisits } from './fetchdata'
+import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store/store"
 
 type Visit = {
@@ -17,27 +17,25 @@ type Visit = {
 }
 
 
-export default async function List() {
+export default function List() {
+    const [data, setVisits] = useState<Visit[]>([])
 
-    const [data, setData] = useState<Visit[]>([])
-    const [loading, setLoading] = useState(true)
+    const [isMounted, setIsMounted] = useState(false)
+
+
+
+    const demoData = useSelector(
+        (state: RootState) => state.visit.visits
+    )
+
+
 
     useEffect(() => {
-        const fetchVisits = async () => {
-            try {
-                const res = await fetch('@/app/api/visits')
-                const result = await res.json()
-                setData(result)
-            } catch (error) {
-                console.error("Failed to fetch visits", error)
-            } finally {
-                setLoading(false)
-            }
-        }
-
         fetchVisits()
+            .then(setVisits)
+            .catch(console.error)
+        setIsMounted(true)
     }, [])
-
 
     const items_per_page = 7
     const [currentPage, setCurrentPage] = useState(1)
@@ -47,7 +45,7 @@ export default async function List() {
     const totalPages = Math.ceil(data.length / items_per_page)
 
     const currentData = data.slice(startIndex, endIndex)
-
+    console.log(data)
     return (
         <div className="h-screen w-full p-2 bg-[#eeeeee]/50">
             {/* ----- Summery Container ----- */}
@@ -60,7 +58,7 @@ export default async function List() {
                     <GrCompliance className="bg-[#eeeeee]/70 text-[#ce7e00] rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Today's Visits</p>
-                        <p className="text-lg font-black self-center">6</p>
+                        <p className="text-lg font-black self-center">{isMounted ? demoData.length : 0}</p>
                     </div>
                 </div>
 

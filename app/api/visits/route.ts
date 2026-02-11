@@ -18,7 +18,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        DBconnection()
+        await DBconnection()
         const { id, name, location, date, pharmacy, remarks } = await request.json()
 
         if (!name || !location || !date) {

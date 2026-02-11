@@ -25,9 +25,9 @@ const VisitSlice = createSlice({
             state.visits.push(action.payload)
         },
         removelist(state, action: PayloadAction<string>) {
-            state.visits = state.visits.filter((visit) => {
-                visit.id !== action.payload
-            })
+            state.visits = state.visits.filter(
+                (visit) => visit.id !== action.payload
+            )
         }
     }
 })

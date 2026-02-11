@@ -1,16 +1,36 @@
 'use client'
+
 import { v4 as uuidv4 } from 'uuid'
-import { UseSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FaUserDoctor, FaMapLocationDot, FaStore } from "react-icons/fa6";
 import { BsFillCalendar2DateFill } from "react-icons/bs";
 import { GrCompliance } from "react-icons/gr";
 import { useState, useEffect } from "react";
 import { addvishlist } from '@/app/store/visitSite'
+import type { RootState } from "@/app/store/store"
+import { fetchVisits } from './fetchdata'
 
+
+type Visit = {
+    name: string
+    location: string
+    date: string
+    pharmacy: string
+    remarks: string
+}
 
 
 
 export default function HomePage() {
+    const [data, setVisits] = useState<Visit[]>([])
+    const [isMounted, setIsMounted] = useState(false)
+
+
+
+    const demoData = useSelector(
+        (state: RootState) => state.visit.visits
+    )
+
 
     const dispatch = useDispatch()
 
@@ -21,14 +41,12 @@ export default function HomePage() {
     const [remarks, setRemarks] = useState('')
     const [errorMsg, setErrorMsg] = useState(false)
 
-    const submitToRedux = () => {
+    const submitToRedux = async () => {
 
         if (!name.trim() || !location.trim() || !date.trim() || !pharmacy.trim() || !remarks.trim()) {
             setErrorMsg(true)
             return
         }
-
-        setErrorMsg(false)
         const demo = {
             id: uuidv4(),
             name,
@@ -37,14 +55,39 @@ export default function HomePage() {
             pharmacy,
             remarks,
         }
-        dispatch(addvishlist(demo))
-        setName('')
-        setLocation('')
-        setDate('')
-        setPharmacy('')
-        setRemarks('')
+        try {
+            const res = await fetch('/api/visits', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(demo)
+            })
+            setErrorMsg(false)
+            dispatch(addvishlist(demo))
+            setName('')
+            setLocation('')
+            setDate('')
+            setPharmacy('')
+            setRemarks('')
+
+            const data = await res.json()
+            console.log(data)
+
+            if (res.ok) {
+                alert("Visit Added Successfully")
+            }
+        } catch {
+            alert("Visit Added Failed")
+        }
 
     }
+
+    useEffect(() => {
+        setIsMounted(true)
+        fetchVisits().then(setVisits)
+            .catch(console.error)
+    }, [])
 
     return (
         <div className="h-screen w-full p-2 bg-[#eeeeee]/50">
@@ -112,7 +155,7 @@ export default function HomePage() {
                     <GrCompliance className="bg-[#eeeeee]/70 text-[#ce7e00] rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Today's Visits</p>
-                        <p className="text-lg font-black self-center">6</p>
+                        <p className="text-lg font-black self-center">{isMounted ? demoData.length : 0}</p>
                     </div>
                 </div>
 
@@ -122,7 +165,7 @@ export default function HomePage() {
                     <GrCompliance className="bg-[#eeeeee]/70 text-green-500 rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Total Visits</p>
-                        <p className="text-lg font-black self-center">6</p>
+                        <p className="text-lg font-black self-center">{isMounted ? data.length : 0}</p>
                     </div>
                 </div>
             </div>
