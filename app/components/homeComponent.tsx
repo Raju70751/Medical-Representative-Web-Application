@@ -1,5 +1,5 @@
 'use client'
-
+import { motion } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid'
 import { useSelector, useDispatch } from 'react-redux';
 import { FaUserDoctor, FaMapLocationDot, FaStore } from "react-icons/fa6";
@@ -142,7 +142,7 @@ export default function HomePage() {
                         <textarea className="p-2 bg-[#eeeeee]/70 text-[#000000] w-full rounded" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
                     </div>
                 </div>
-                <button className="p-2 bg-blue-500 rounded w-70 self-center shadow-lg shadow-blue-400" onClick={() => submitToRedux()}>SUBMIT</button>
+                <motion.button whileHover={{ scale: 1.05 }} className="p-2 bg-blue-500 rounded w-70 self-center shadow-lg shadow-blue-400 font-black hover:bg-blue-800 hover:text-white" onClick={() => submitToRedux()}>SUBMIT</motion.button>
             </div>
 
             {/* ----- Summery Container ----- */}
@@ -151,7 +151,7 @@ export default function HomePage() {
 
                 {/* ----- Daily Visit ----- */}
 
-                <div className="inline-flex justify-start items-center md:w-1/2 bg-white rounded gap-2 p-2 shadow-lg" >
+                <div className="inline-flex justify-start items-center md:w-1/2 bg-white rounded gap-2 p-2 shadow-lg " >
                     <GrCompliance className="bg-[#eeeeee]/70 text-[#ce7e00] rounded p-1 text-4xl" />
                     <div className="p-2 flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Today's Visits</p>

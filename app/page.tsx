@@ -1,4 +1,3 @@
-import Image from "next/image";
 import HomePage from '@/app/components/homeComponent'
 import { DBconnection } from '@/lib/db'
 

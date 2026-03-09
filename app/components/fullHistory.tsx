@@ -50,7 +50,7 @@ export default function List() {
     useEffect(() => {
         setCurrentPage(1)
     }, [search, reqDate])
-
+    console.log(data)
     return (
         <div className="h-screen w-full p-2 bg-[#eeeeee]/50">
 
@@ -66,7 +66,7 @@ export default function List() {
                     </div>
                 </div>
 
-                <div className="inline-flex items-center bg-white rounded gap-2 p-2 shadow-lg">
+                <div className="inline-flex items-center bg-white rounded gap-2 p-2 shadow-lg" >
                     <GrCompliance className="bg-[#eeeeee]/70 text-green-500 rounded p-1 text-4xl" />
                     <div className="flex flex-col">
                         <p className="text-md text-[#6bb2f2] font-bold">Total Visits</p>
